@@ -7,9 +7,7 @@
                 <span>&nbsp;</span>
             </div>
             <!-- 返回顶部按钮 -->
-            <div class="toTop">
-                <p>回顶部</p>
-            </div>
+            <totop></totop>
             <!--轮播图-->
             <div class="carousel">
                 <ul>
@@ -50,17 +48,16 @@
                 <!-- 详情地理信息 -->
                 <div class="mapText">
                     <ul>
-                        <li><div class="active"><span class="iconDz"></span>地址</div></li>
-                        <li><div><span class="iconJt"></span>交通</div></li>
-                        <li><div><span class="iconPt"></span>周边配套</div></li>
+                        <li @click="changeMapText(i)" v-for="(item,i) of mapTextList" :key="i"><div :class="{active:i==mapTextIndex}"><span :style="{background:'url('+item.imgUrl+') top no-repeat'}"></span>{{item.title}}</div></li>
+                        
                     </ul>
-                    <div class="mapTextConter" style="">碑林&nbsp;东关正街&nbsp;长乐坊18号
+                    <div class="mapTextConter" v-show="0==mapTextIndex">碑林&nbsp;东关正街&nbsp;长乐坊18号
                     </div>
-                    <div class="mapTextConter" style="display:none;">
+                    <div class="mapTextConter" v-show="1==mapTextIndex">
                         203路;228路;237路;240路;408路;410路;512路;517路;709路;709路区间;K622路 <br>
                         1号线(康复路站)，步行14分钟|3号线(长乐公园站)|1号线;3号线(通化门站)|1号线(朝阳门站)
                     </div>
-                    <div class="mapTextConter" style="display:none">
+                    <div class="mapTextConter" v-show="2==mapTextIndex">
                         <ul>
                             <li><span> 饮食：</span>王李记冷锅串串、澄城水盆羊肉、小六汤包、桥头米线涮牛肚、重庆四座火锅
                             </li>
@@ -84,15 +81,21 @@
                 <div>
                     <div class="tabSheshi">
                         <ul>
-                            <li><span class="active">独用设施</span></li> <li><span class="">公用设施</span></li>
+                            <li><span @click="sheshiTab" :class="{active:sheshiIndex==0}" data-index=0>独用设施</span></li> 
+                            <li><span @click="sheshiTab" :class="{active:sheshiIndex==1}" data-index=1>公用设施</span></li>
                         </ul>
                     </div>
-                    <ul id="example-1" class="icon-list" style="">
+                    <ul class="icon-list" v-show="sheshiIndex==0">
                         <li><img src="../../../public/details/1.png"></li>
                         <li><img src="../../../public/details/2.png"></li>
                         <li><img src="../../../public/details/3.png"></li>
                         <li><img src="../../../public/details/4.png"></li>
                         <li><img src="../../../public/details/5.png"></li>
+                    </ul>
+                    <ul class="icon-list" v-show="sheshiIndex==1">
+                        <li><img src="../../../public/details/6.png"></li>
+                        <li><img src="../../../public/details/7.png"></li>
+                        
                     </ul>
                 </div>
             </div>
@@ -131,13 +134,34 @@
     </div>
 </template>
 <script>
+import ToTop from './ToTop.vue'
 export default {
     data(){
         return {
             popupVisible:true,
+            mapTextIndex:0,//控制mapText三个板块切换的中间量
+            mapTextList:[
+                {title:"地址",imgUrl:"../../../public/details/position.png"},
+                {title:"交通",imgUrl:"../../../public/details/traffic.png"},
+                {title:"周边配套",imgUrl:"../../../public/details/near.png"},
+            ],
+            sheshiIndex:0,
 
         }
-    }
+    },
+    methods:{
+        changeMapText(i){//切换mapText三个板块的切换函数
+            this.mapTextIndex=i;
+        },
+        sheshiTab(e){
+            console.log(e.target);
+            this.sheshiIndex=e.target.dataset.index;
+            console.log(this.sheshiIndex);
+        }
+    },
+    components:{
+        "totop":ToTop,
+    },
 }
 </script>
 <style scoped>
@@ -183,7 +207,6 @@ export default {
         bottom: 1.28rem;
         right: .3rem;
         animation: .7s opacity2 0s;
-        -webkit-animation: .7s opacity2 0s;
     }
     .toTop>p{
         position: absolute;
@@ -339,13 +362,14 @@ export default {
         color: #ee3943;
         border-bottom: .04rem solid #ee3943;
     }
-    .mapText>ul>li>div>span{
+    .mapText>ul>li>div span{
         display: inline-block;
         vertical-align: middle;
         margin-right: .1rem;
         width: .26rem;
         height: .26rem;
         padding: 0;
+        background-size: .22rem .26rem;
     }
     .iconDz{
         background: url(../../../public/details/position-red.png) top no-repeat;
